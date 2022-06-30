@@ -236,7 +236,7 @@ function App() {
                         rel="noopener noreferrer"
                         target="_blank"
                         href="https://amigoscode.com/courses/full-stack-spring-boot-react/lectures/31136128">
-                        Click here to access to SpringBoot-React-Fullstack
+                        Access to SpringBoot-React-Fullstack
                     </a>
                 </Divider>
             </Footer>
