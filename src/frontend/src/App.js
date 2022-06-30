@@ -233,6 +233,7 @@ function App() {
                 By AndyCode
                 <Divider>
                     <a
+                        rel="noopener noreferrer"
                         target="_blank"
                         href="https://amigoscode.com/courses/full-stack-spring-boot-react/lectures/31136128">
                         Click here to access to SpringBoot-React-Fullstack
