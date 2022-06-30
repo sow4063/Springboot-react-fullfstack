@@ -13,7 +13,7 @@ import {
     Tag,
     Avatar,
     Popconfirm,
-    Radio
+    Radio, Divider
 } from 'antd';
 
 import {
@@ -229,7 +229,16 @@ function App() {
                     {renderStudents()}
                 </div>
             </Content>
-            <Footer style={{ textAlign: 'center' }}>By AndyCode</Footer>
+            <Footer style={{ textAlign: 'center' }}>
+                By AndyCode
+                <Divider>
+                    <a
+                        target="_blank"
+                        href="https://amigoscode.com/courses/full-stack-spring-boot-react/lectures/31136128">
+                        Click here to access to SpringBoot-React-Fullstack
+                    </a>
+                </Divider>
+            </Footer>
         </Layout>
     </Layout>
 }
