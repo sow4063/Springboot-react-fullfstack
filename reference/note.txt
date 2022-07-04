@@ -1,0 +1,185 @@
+If -Djib.to.image=fullstack:v1 does not work try -Dimage=fullstack:v1
+
+Mac
+- ./mvnw compile jib:dockerBuild -Djib.to.image=fullstack:v1 or ./mvnw compile jib:dockerBuild -Dimage=fullstack:v1
+- ./mvnw clean install jib:dockerBuild -Djib.to.image=fullstack:v1 or ./mvnw clean install jib:dockerBuild -Dimage=fullstack:v1
+
+
+Windows
+- mvnw compile jib:dockerBuild -Djib.to.image=fullstack:v1 or mvnw compile jib:dockerBuild -Dimage=fullstack:v1
+- mvnw clean install jib:dockerBuild -Djib.to.image=fullstack:v1 or mvnw clean install jib:dockerBuild -Dimage=fullstack:v1
+
+To run container
+- docker run --name fullstack -p 8080:8080 fullstack:v1
+
+To delete container with name fullstack
+- docker rm -f fullstack 
+
+To view local images run
+- docker image ls or docker images
+
+To view running containers
+- docker ps 
+
+-------------------------------------------------------------------------------------------
+[ docker command ]
+
+docker login 
+docker pull 
+docker rm -f id 
+docker rmi imageid
+
+./mvnw clean install jib:build -Djib.to.image=sow4063/springboot-react-fullstack:latest 
+./mvnw clean install jib:build -Djib.to.image=sow4063/springboot-react-fullstack:latest -D jib.to.auth.username=sow4063 -Djib.to.auth.password=yourpassword 
+
+docker pull sow4063/springboot-react-fullstack:latest 
+docker run -p 8080:8080 sow4063/springboot-react-fullstack
+
+./mvnw help:active-profiles
+./mvnw clean install -P build-frontend -P jib-push-to-dockerhub -Dapp.image.tag=2
+./mvnw clean install -P build-frontend -P jib-push-to-local -Dapp.image.tag=latest
+
+-------------------------------------------------------------------------------------------
+[ PostgreSql ] 
+
+docker network create db
+docker network rm db
+
+docker run --name db -p 5432:5432 --network=db -v "%cd%:/var/lib/postgresql/data" -e POSTGRES_PASSWORD=password -d postgres:alpine
+
+1 - create a folder to mount /var/lib/postgresql/data
+2 - cd into that folder
+3 - 
+
+MAC LINUX Users
+docker run --name db -p 5432:5432 --network=db -v "$PWD:/var/lib/postgresql/data" -e POSTGRES_PASSWORD=password -d postgres:alpine
+
+default port : 5432
+dev port : 5433
+
+WINDOWS Users
+docker run --name db -p 5432:5432 --network=db -v "%cd%:/var/lib/postgresql/data" -e POSTGRES_PASSWORD=password -d postgres:alpine
+
+docker run -it --rm --network=db postgres:alpine psql -h db -U postgres
+
+brew services stop postgresql
+
+sudo kill -9 126(pid)
+
+[TO AWS]
+docker run -it --rm postgres:alpine psql -h aa1b5p2o8g8q63a.cw6iospjvobq.ap-northeast-2.rds.amazonaws.com -U andycode -d postgres
+
+./mvnw clean install -P build-frontend -P jib-push-to-dockerhub -Dapp.image.tag=3
+
+-------------------------------------------------------------------------------------------
+
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>org.postgresql</groupId>
+	<artifactId>postgresql</artifactId>
+	<scope>runtime</scope>
+</dependency>
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/amigoscode
+spring.datasource.username=
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+-------------------------------------------------------------------------------------------
+https://www.mockaroo.com/
+-------------------------------------------------------------------------------------------
+
+{
+  "name": "Amigoscode",
+  "gender": "MALE",
+  "email": "hello@amigoscode.com"
+}
+
+-------------------------------------------------------------------------------------------
+
+package com.example.demo.student.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class StudentNotFoundException extends RuntimeException{
+
+    public StudentNotFoundException(String msg) {
+        super(msg);
+    }
+}
+
+package com.example.demo.student.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class BadRequestException extends RuntimeException{
+
+    public BadRequestException(String msg) {
+        super(msg);
+    }
+}
+
+@Query("" +
+        "SELECT CASE WHEN COUNT(s) > 0 THEN " +
+        "TRUE ELSE FALSE END " +
+        "FROM Student s " +
+        "WHERE s.email = ?1"
+)
+Boolean selectExistsEmail(String email);
+
+-------------------------------------------------------------------------------------------
+
+spring.datasource.url=jdbc:postgresql://aa9320n4muma7h.celswdmxhcr1.eu-west-1.rds.amazonaws.com:5432/amigoscode
+spring.datasource.username=amigoscode
+spring.datasource.password=password
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+[ Homebrew로 EB CLI 설치 ]
+
+brew upgrade
+brew install awsebcli
+eb --version
+eb init
+    region / seoul
+eb config Springfullstack-env
+    aws:rds:dbinstance:
+    HasCoupledDatabase: 'false'
+    DBEngineVersion: '8.0'        <<<<======= add this line.
+
+devops / deckey / deckey-value / 2ObpO}Q28yOx0})3
+    [Acess KEY ID / Secret access key]
+ -> AKIA3GUZCIAMMHZMIWOK / ECQGtH4GTr6cjjV9ZfQ4V1EK0ClsC1/SfzGBx5nF
+
+ # https://soulduse.tistory.com/104
+
+AWS DB : postgres / 12.9 / db.t2.micro / 5 / andycode / password
+
+
+-------------------------------------------------------------------------------------------
+Testing error reference
+: https://velog.io/@jwkim/spring-boot-datajpatest-error
+-------------------------------------------------------------------------------------------
+Uninstall Posgtgresql 14
+sudo /Library/PostgreSQL/14/uninstall-postgresql.app/Contents/MacOS/installbuilder.sh
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
