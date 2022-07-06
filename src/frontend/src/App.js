@@ -13,7 +13,8 @@ import {
     Tag,
     Avatar,
     Popconfirm,
-    Radio, Divider
+    Radio,
+    Divider
 } from 'antd';
 
 import {
@@ -68,7 +69,7 @@ const removeStudent = (studentId, callback) => {
     });
 }
 
-const columns = fetchStudents => [
+const columns = (fetchStudents, setShowDrawer, showDrawer, setEditMode )  => [
     {
         title: '',
         dataIndex: 'avatar',
@@ -108,7 +109,15 @@ const columns = fetchStudents => [
                     cancelText='No'>
                     <Radio.Button value="small">Delete</Radio.Button>
                 </Popconfirm>
-                <Radio.Button value="small">Edit</Radio.Button>
+                <Radio.Button
+                    onClick={() => {
+                            setShowDrawer(!showDrawer);
+                            setEditMode(true);
+                        }
+                    }
+                    value="small">
+                    Edit
+                </Radio.Button>
             </Radio.Group>
     },
 
@@ -118,9 +127,11 @@ const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 function App() {
     const [students, setStudents] = useState([]);
+    const [student, setStudent] = useState(null);
     const [collapsed, setCollapsed] = useState(false);
     const [fetching, setFetching] = useState(true);
     const [showDrawer, setShowDrawer] = useState(false);
+    const [editMode, setEditMode] = useState(false);
 
     const fetchStudents = () =>
         getAllStudents()
@@ -137,7 +148,10 @@ function App() {
                         "BottomLeft"
                     );
                 });
-            }).finally(() => setFetching(false));
+            }).finally(() => {
+                setFetching(false);
+                setEditMode(false);
+            });
 
     useEffect(() => {
         console.log("component is mounted");
@@ -149,16 +163,23 @@ function App() {
             return <Spin indicator={antIcon} />;
         }
         if (students.length <= 0) {
+            setStudent(null);
             return <>
                 <Button
-                    onClick={() => setShowDrawer(!showDrawer)}
+                    onClick={() => {
+                            setShowDrawer(!showDrawer);
+                            setEditMode(false);
+                        }
+                    }
                     type="primary" shape="round" icon={<PlusOutlined />} size="small">
                     Add New Student
                 </Button>
                 <StudentDrawerForm
+                    editMode={editMode}
                     showDrawer={showDrawer}
                     setShowDrawer={setShowDrawer}
                     fetchStudents={fetchStudents}
+                    values={student}
                 />
                 <Empty />
             </>;
@@ -166,20 +187,26 @@ function App() {
 
         return <>
             <StudentDrawerForm
+                editMode={editMode}
                 showDrawer={showDrawer}
                 setShowDrawer={setShowDrawer}
                 fetchStudents={fetchStudents}
+                values={student}
             />
             <Table
             dataSource={students}
-            columns={columns(fetchStudents)}
+            columns={columns(fetchStudents, setShowDrawer, showDrawer, setEditMode )}
             bordered
             title={() =>
                 <>
                 <Tag>Number of students</Tag>
                 <Badge count={students.length} className="site-badge-count-4"/><br/><br/>
                 <Button
-                    onClick={() => setShowDrawer(!showDrawer)}
+                    onClick={() => {
+                        setShowDrawer(!showDrawer);
+                        setEditMode(false);
+                        setStudent(null);
+                    }}
                     type="primary" shape="round" icon={<PlusOutlined />} size="small">
                     Add New Student
                 </Button>
@@ -188,6 +215,11 @@ function App() {
             pagination={{ pageSize: 50 }}
             scroll={{ y: 500 }}
             rowKey={(student) => student.id}
+            onRow={(record, recordIndex) => ({
+                onClick: event => {
+                    setStudent(record);
+                }
+            })}
         />
         </>;
     }

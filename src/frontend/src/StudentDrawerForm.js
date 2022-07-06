@@ -1,6 +1,6 @@
 // StudentDrawerForm.js
 
-import {addNewStudent} from "./client";
+import {addNewStudent, updateStudent} from "./client";
 import {useState} from "react";
 import {successNotification, errorNotification} from "./Notification";
 
@@ -11,22 +11,35 @@ const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const {Option} = Select;
 
-function StudentDrawerForm({showDrawer, setShowDrawer, fetchStudents}) {
+function StudentDrawerForm({editMode, showDrawer, setShowDrawer, fetchStudents, values}) {
     const [submitting, setSubmitting] = useState(false);
     const onCLose = () => setShowDrawer(false);
 
-    const onFinish = student => {
-        setSubmitting(true);
-        console.log(JSON.stringify(student, null, 2));
-        addNewStudent(student)
+    const title = editMode ? "Edit Student": "Create New Student";
+
+    const id = values ? values.id : "";
+    const name = values ? values.name : "";
+    const email = values ? values.email : "";
+    const gender = values ? values.gender : "";
+
+    const [form] = Form.useForm();
+
+    form.setFieldsValue({
+        name: name,
+        email: email,
+        gender: gender
+    });
+
+    const editStudent = (student, callback) => {
+        updateStudent(student)
             .then(() => {
-                console.log("student added");
+                console.log("student updated");
                 onCLose();
                 successNotification(
-                    "Student successfully added",
-                    `${student.name} was added to the server`,
+                    "Student successfully updateded",
+                    `${student.name} was updated to the server`,
                     "bottomLeft");
-                fetchStudents();
+                callback();
             })
             .catch(err => {
                 console.log(err);
@@ -42,6 +55,45 @@ function StudentDrawerForm({showDrawer, setShowDrawer, fetchStudents}) {
             .finally(() => {
                 setSubmitting(false);
             })
+    }
+
+    const insertStudent = (student, callback) => {
+        addNewStudent(student)
+            .then(() => {
+                console.log("student added");
+                onCLose();
+                successNotification(
+                    "Student successfully added",
+                    `${student.name} was added to the server`,
+                    "bottomLeft");
+                callback();
+            })
+            .catch(err => {
+                console.log(err);
+                err.response.json().then(res => {
+                    console.log(res);
+                    errorNotification(
+                        "There was an issue",
+                        `${res.message} [${res.status}] [${res.error}]`,
+                        "bottomLeft"
+                    )
+                });
+            })
+            .finally(() => {
+                setSubmitting(false);
+            })
+    }
+
+    const onFinish = student => {
+        setSubmitting(true);
+        console.log(JSON.stringify(student, null, 2));
+        if(editMode) {
+            student.id = id;
+            editStudent(student, fetchStudents);
+        } else {
+            insertStudent(student, fetchStudents);
+        }
+
     };
 
     const onFinishFailed = errorInfo => {
@@ -49,7 +101,7 @@ function StudentDrawerForm({showDrawer, setShowDrawer, fetchStudents}) {
     };
 
     return <Drawer
-        title="Create new student"
+        title={title}
         width={720}
         onClose={onCLose}
         visible={showDrawer}
@@ -69,6 +121,7 @@ function StudentDrawerForm({showDrawer, setShowDrawer, fetchStudents}) {
         <Form layout="vertical"
               onFinishFailed={onFinishFailed}
               onFinish={onFinish}
+              form = {form}
               hideRequiredMark>
             <Row gutter={16}>
                 <Col span={12}>
